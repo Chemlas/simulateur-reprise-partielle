@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulateur Reprise Partielle - Accident de Travail</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f7f9fc; color: #333; }
+    .container { max-width: 600px; margin: auto; padding: 30px; background: #fff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
+    button { margin-top: 20px; padding: 12px 20px; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .result { margin-top: 30px; background: #e9f5ff; padding: 20px; border-radius: 8px; }
+    h2 { text-align: center; color: #007BFF; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Simulateur de Reprise Partielle (Accident de Travail)</h2>
+    <label for="salaire">Salaire brut mensuel à temps plein (€)</label>
+    <input type="number" id="salaire" value="3340">
+
+    <label for="taux">Taux de reprise (% de temps travaillé)</label>
+    <input type="number" id="taux" value="50">
+
+    <label for="jours">Nombre de jours indemnisés par la CPAM</label>
+    <input type="number" id="jours" value="15">
+
+    <label for="pas">Prélèvement à la source (%)</label>
+    <input type="number" id="pas" value="6.5">
+
+    <button onclick="calculer()">Calculer</button>
+
+    <div class="result" id="resultat"></div>
+  </div>
+
+  <script>
+    function calculer() {
+      const salaireBrut = parseFloat(document.getElementById('salaire').value);
+      const tauxReprise = parseFloat(document.getElementById('taux').value);
+      const joursIndemnises = parseInt(document.getElementById('jours').value);
+      const tauxPAS = parseFloat(document.getElementById('pas').value);
+
+      const salaireEmployeurBrut = salaireBrut * (tauxReprise / 100);
+      const salaireEmployeurNet = salaireEmployeurBrut * 0.77;
+      const SJR = salaireBrut / 30;
+      const IJBrut = SJR * 0.8; // 80% du SJR
+      const IJNet = IJBrut * 0.79;
+      const totalIJ = IJNet * joursIndemnises;
+
+      const totalAvantPAS = salaireEmployeurNet + totalIJ;
+      const montantPAS = salaireEmployeurNet * (tauxPAS / 100);
+      const totalNet = totalAvantPAS - montantPAS;
+
+      document.getElementById('resultat').innerHTML = `
+        <strong>Salaire employeur net :</strong> ${salaireEmployeurNet.toFixed(2)} €<br>
+        <strong>Indemnités journalières nettes (CPAM) :</strong> ${totalIJ.toFixed(2)} €<br>
+        <strong>Total net avant PAS :</strong> ${totalAvantPAS.toFixed(2)} €<br>
+        <strong>Prélèvement à la source :</strong> ${montantPAS.toFixed(2)} €<br>
+        <strong style="font-size: 1.2em; color: #007BFF">Net à percevoir : ${totalNet.toFixed(2)} €</strong>
+      `;
+    }
+  </script>
+</body>
+</html>
